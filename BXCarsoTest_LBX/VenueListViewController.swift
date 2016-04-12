@@ -29,7 +29,7 @@ class VenueListViewController: UIViewController, UITableViewDataSource, UITableV
         view.backgroundColor = UIColor.blackColor()
         setUpTableView()
         
-        getVenuesData()
+        promptForLocation()
 
     }
 
@@ -140,11 +140,36 @@ class VenueListViewController: UIViewController, UITableViewDataSource, UITableV
     }
 
     
+    func promptForLocation() {
+        
+        let textPrompt = UIAlertController(title: "Atención", message: "Ingresa un nombre de ciudad", preferredStyle: UIAlertControllerStyle.Alert)
+        textPrompt.addTextFieldWithConfigurationHandler({(cityTextField: UITextField!) in
+            cityTextField.placeholder = "Ciudad"
+            cityTextField.secureTextEntry = true
+        })
+        
+        textPrompt.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Default, handler: nil))
+        
+        let okAction = UIAlertAction(title: "Buscar", style: UIAlertActionStyle.Default) { (yAction) -> Void in
+            
+            if textPrompt.textFields?.first?.text?.characters.count > 0{
+                self.getVenuesData(textPrompt.textFields?.first?.text)
+            }
+            else{
+                self.getVenuesData("Ciudad de Mexico")
+            }
+            
+            
+        }
+        textPrompt.addAction(okAction)
+        
+        presentViewController(textPrompt, animated: true, completion: nil)
+        
+    }
     
-    func getVenuesData() {
+    func getVenuesData(searchString : String?) {
         
-        
-        Alamofire.request(.GET, "https://api.foursquare.com/v2/venues/search", parameters: ["near": "Monterrey", "client_id": fourSquareClientId, "client_secret": fourSquareClientSecret, "v": "20151231", "limit": "10"])
+        Alamofire.request(.GET, "https://api.foursquare.com/v2/venues/search", parameters: ["near": searchString!, "client_id": fourSquareClientId, "client_secret": fourSquareClientSecret, "v": "20151231", "limit": "30"])
             .responseJSON { response in
                 
                 switch response.result {

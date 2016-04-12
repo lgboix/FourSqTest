@@ -163,18 +163,15 @@ class VenueViewModel: NSObject {
         
         let managedContext = appDelegate.managedObjectContext
         
-        //2
         let entity =  NSEntityDescription.entityForName("VenueCDModel",
             inManagedObjectContext:managedContext)
         
         let venue = NSManagedObject(entity: entity!,
             insertIntoManagedObjectContext: managedContext)
         
-        //3
         venue.setValue(venueId, forKey: "id")
         venue.setValue(name, forKey: "name")
         
-        //4
         do {
             try managedContext.save()
             
